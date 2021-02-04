@@ -1,0 +1,8 @@
+killall picom
+killall polybar
+killall nm-applet
+killall python3
+polybar main & polybar external &
+nm-applet &
+picom --fade-in-step=1 --fade-out-step=1
+

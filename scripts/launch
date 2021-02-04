@@ -1,0 +1,4 @@
+#!/bin/sh
+
+. ~/scripts/optimus
+gtk-launch "$(ls ~/Desktop | rev | cut -c9- | rev | dmenu)"
