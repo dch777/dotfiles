@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+
+import os
+import sys
+from datetime import datetime
+
+
+def main():
+    os.system("mkdir -p ~/Documents/Notes")
+    os.chdir("/home/dchanana/Documents/Notes")
+    try:
+        if sys.argv[1] == "new":
+            date = datetime.now().strftime("%m%d%y_%H%M")
+            filename = f"/home/dchanana/Documents/Notes/{sys.argv[2]}/{sys.argv[3]}.md"
+            os.system(f"mkdir -p ~/Documents/Notes/{sys.argv[2]}")
+            if not input("open file? [Y/n]: ") == "n":
+                os.system(f"nvim {filename}")
+        elif sys.argv[1] == "search" and len(sys.argv) > 2:
+            os.system(f"nvim -o $(find ~/Documents/Notes/{sys.argv[2]}/* | fzf -m)")
+        elif sys.argv[1] == "search":
+            os.system(f"nvim -o $(find ~/Documents/Notes/* | fzf -m)")
+        else:
+            raise IndexError
+    except IndexError:
+        print(f"Usage: \n\tnote new <topic> <title> \n\tnote search <topic>")
+        pass
+    except Exception as e:
+        raise e
+
+
+if __name__ == "__main__":
+    main()

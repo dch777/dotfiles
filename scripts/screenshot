@@ -1,0 +1,5 @@
+#!/bin/bash
+
+scrot -s -f "%Y-%m-%d_\$wx\$h.png" -e "mv \$f ~/Pictures/screenshots/ && \
+	xclip -selection clipboard -target image/png -i ~/Pictures/screenshots/\$f && \
+	dunstify -I ~/Pictures/screenshots/\$f Screenshot Taken"

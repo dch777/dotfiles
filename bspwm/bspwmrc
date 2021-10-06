@@ -1,21 +1,27 @@
-#! /bin/sh
+#! /bin/bash
+
+export MONITOR1=$(xrandr -q | grep " connected" | cut -d ' ' -f1 | head -n 1)
+export MONITOR2=$(xrandr -q | grep " connected" | cut -d ' ' -f1 | sed -n 2p)
+
+xrandr --output $MONITOR1 --right-of $MONITOR2
 
 sxhkd &
 
-bspc monitor eDP-1  -d 1 2 3 4 5 6 7 8 9 10
-bspc monitor HDMI-1  -d 11 12 13 14 1 5 16 17 18 19 20
+bspc monitor $MONITOR2 -d 1 2 3 4 5 6 7 8 9 10
+bspc monitor $MONITOR1 -d 11 12 13 14 15 16 17 18 19 20
 
-bspc config border_width         0
-bspc config window_gap           8
+bspc config border_width 	0
+bspc config window_gap 		10
 
 bspc config split_ratio          0.5
 bspc config borderless_monocle   true
 bspc config gapless_monocle      true
 
+bspc rule -a 'Nm-connection-editor' state=floating follow=on focus=on
+
 xmodmap -e 'clear Lock' -e 'keycode 0x42 = Escape'
 xrdb ~/.Xresources
-wal -i ~/.wallpaper/wallpaper.jpg --backend wal
-feh --bg-fill .wallpaper/wallpaper.jpg --bg-fill .wallpaper/test.jpg 
+hsetroot -solid "#282828" -center `find ~/Pictures/wallpaper -name '*.png' | shuf -n 1` -write ~/Pictures/lock.png
+~/.config/polybar/launch.sh
 
-~/scripts/startup
-~/scripts/pulse-volume-monitor.py | xob -s bspwm
+~/.scripts/startup

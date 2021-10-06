@@ -1,4 +1,4 @@
 #!/bin/bash
 
-xrandr --output eDP-1 --primary --auto --output HDMI-1 --right-of eDP-1 --rotate normal --auto
+xrandr --output $MONITOR2 --primary --auto --output $MONITOR1 --right-of $MONITOR2 --rotate normal --auto
 bspc wm -r

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+msgId="991050"
+
+case $1 in
+    up)
+	xbacklight -inc 5 &
+	;;
+    down)
+	xbacklight -dec 5 &
+	;;
+esac
+
+brightness="$(xbacklight -get)"
+icon_name="/usr/share/icons/Faba/48x48/notifications/notification-display-brightness.svg"
+
+if [[ $brightness == 0 ]]; then
+    # Show the screen disabled notification
+    dunstify -a "changeBrightness" -u low -i "$icon_name" -r "$msgId" "Backlight Off" 
+else
+    # Show the brightness notification
+    dunstify -a "changeBrightness" -u low -i "$icon_name" -r "$msgId" \
+    "Brightness: $brightness%" \
+    "<b>―</b>$(~/.scripts/getProgressString 19 "<b>―</b>" "─" "<b>|</b>" $brightness)" 
+fi
+

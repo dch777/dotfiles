@@ -1,8 +1,13 @@
-killall picom
-killall polybar
-killall nm-applet
-killall python3
-polybar main & polybar external &
-nm-applet &
-picom --fade-in-step=1 --fade-out-step=1
+killall xautolock
+xautolock -detectsleep \
+          -notify   60 -notifier "dunstify -u critical -t 10000 'LOCKING Screen in one minute' -r 10234" \
+          -time     10 -locker   "betterlockscreen -l"  \
+          -killtime 20 -killer   "systemctl hybrid-sleep" &
 
+killall picom
+picom --no-fading-openclose &
+
+killall clight
+clight --no-kbd &
+
+betterlockscreen -u ~/Pictures/lock.png --span

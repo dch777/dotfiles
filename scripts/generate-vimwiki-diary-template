@@ -1,0 +1,38 @@
+#!/usr/bin/python
+
+import datetime
+import sys
+
+template = """# {date}
+
+## Daily schedule
+
+{checklist}
+
+## TODO
+
+"""
+
+date = datetime.date.today()
+checklist = ""
+if datetime.date.today().weekday() == 0:
+    checklist += "- [ ] 9:00 Chem\n"
+    checklist += "- [ ] 10:00 Calculus\n"
+    checklist += "- [ ] 11:00 English\n"
+    checklist += "- [ ] 18:00 Chem Lab"
+elif datetime.date.today().weekday() == 1:
+    checklist += "- [ ] 9:30 Calculus\n"
+    checklist += "- [ ] 13:00 CS"
+elif datetime.date.today().weekday() == 2:
+    checklist += "- [ ] 8:00 Chem Recitation\n"
+    checklist += "- [ ] 9:00 Chem\n"
+    checklist += "- [ ] 10:00 Calculus\n"
+    checklist += "- [ ] 11:00 English"
+elif datetime.date.today().weekday() == 3:
+    checklist += "- [ ] 13:00 CS\n"
+    checklist += "- [ ] 14:30 CS Lab"
+elif datetime.date.today().weekday() == 4:
+    checklist += "- [ ] 9:00 Chem\n"
+    checklist += "- [ ] 10:00 Calculus\n"
+    checklist += "- [ ] 11:00 English"
+print(template.format(date=date, checklist=checklist))

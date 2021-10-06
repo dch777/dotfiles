@@ -1,0 +1,47 @@
+#!/bin/bash
+
+msgId="991049"
+
+case $1 in
+    up)
+	amixer -D pulse set Master on > /dev/null
+	amixer -D pulse sset Master 5%+ > /dev/null
+	;;
+    down)
+	amixer -D pulse set Master on > /dev/null
+	amixer -D pulse sset Master 5%- > /dev/null
+	;;
+    mute)
+	amixer -D pulse set Master 1+ toggle > /dev/null
+	;;
+esac
+
+volume="$(amixer -D pulse get Master | grep '%' | head -n 1 | cut -d '[' -f 2 | cut -d '%' -f 1)"
+mute="$(pacmd list-sinks | grep "RUNNING" -A 7 | awk '/muted/ { print $2 }')"
+echo $mute
+
+if [ "$volume" == "0" -o "$mute" == "yes" ]; then
+        icon_name="/usr/share/icons/Faba/48x48/notifications/notification-audio-volume-muted.svg"
+else if [ "$volume" -lt "10" ]; then
+	icon_name="/usr/share/icons/Faba/48x48/notifications/notification-audio-volume-low.svg"
+else if [ "$volume" -lt "30" ]; then
+        icon_name="/usr/share/icons/Faba/48x48/notifications/notification-audio-volume-low.svg"
+else if [ "$volume" -lt "70" ]; then
+	icon_name="/usr/share/icons/Faba/48x48/notifications/notification-audio-volume-medium.svg"
+else
+        icon_name="/usr/share/icons/Faba/48x48/notifications/notification-audio-volume-high.svg"
+fi
+fi
+fi
+fi
+
+if [ "$volume" == "0" -o "$mute" == "yes" ]; then
+    # Show the sound muted notification
+    dunstify -a "changeVolume" -u low -i "$icon_name" -r "$msgId" "Volume muted" 
+else
+    # Show the volume notification
+    dunstify -a "changeVolume" -u low -i "$icon_name" -r "$msgId" \
+    "Volume: $volume%" \
+    "<b>―</b>$(~/.scripts/getProgressString 19 "<b>―</b>" "─" "<b>|</b>" $volume)" 
+fi
+

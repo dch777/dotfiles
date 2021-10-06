@@ -1,155 +1,105 @@
 [colors]
 accent = #fba922
+background = #282828
+foreground = #ebdbb2
 
 [bar/main]
-monitor = eDP-1
-bottom = true
-tray-position = right
-tray-background = #000
+monitor = ${env:MONITOR2}
+bottom = false
 width = 100%
-height = 27
+height = 33
 
-background = #1c1c1c
-foreground = #eefafafa
-
-overline-size = 3
-overline-color = ${colors.accent}
-underline-size = 3
-underline-color = ${colors.accent}
-
-;border-color = #ff0000
-border-top-size = 3
-border-top-color = #3d3d3d
-;border-bottom = 0
-;border-bottom-color = #333333
+background = ${colors.background}
+foreground = ${colors.foreground}
 
 spacing = 3
-;padding-right = 4
-padding-left = 0
-padding-right = 0
+padding-left = 3
+padding-right = 5
 module-margin-left = 2
 module-margin-right = 2
 
-font-0 = NotoSans-Regular:size=10;0
-font-1 = Iosevka:size=10;0
+font-0 = FontAwesome:size=10;0
+font-1 = Monospace:size=8;0
+font-2 = Monospace:size=16;0
 
-modules-left = bspwm xwindow
-modules-center = 
-modules-right = pulseaudio cpu memory battery clock
-;modules-right = memory
+modules-left = bspwm 
+modules-center = xwindow
+modules-right = pulseaudio cpu memory wlan battery clock
 
 wm-restack = bspwm
 
 [bar/external]
-monitor = HDMI-1
+monitor = ${env:MONITOR1}
+monitor-struct = true
+bottom = false
 width = 100%
-height = 27
-bottom = true
+height = 33
 
-background = #1c1c1c
-foreground = #eefafafa
-
-overline-size = 3
-overline-color = ${colors.accent}
-underline-size = 3
-underline-color = ${colors.accent}
-
-;border-color = #ff0000
-border-top-size = 3
-border-top-color = #3d3d3d
-;border-bottom = 0
-;border-bottom-color = #333333
+background = ${colors.background}
+foreground = ${colors.foreground}
 
 spacing = 3
-;padding-right = 4
-padding-left = 0
-padding-right = 0
+padding-left = 3
+padding-right = 5
 module-margin-left = 2
 module-margin-right = 2
 
-font-0 = NotoSans-Regular:size=10;0
-font-1 = Iosevka:size=10;0
+font-0 = FontAwesome:size=10;0
+font-1 = Monospace:size=8;0
+font-2 = Monospace:size=16;0
 
-modules-left = bspwm xwindow
-modules-center = 
-;modules-right = memory
+modules-left = bspwm 
+modules-center = xwindow
+modules-right = pulseaudio cpu memory wlan battery clock
 
 wm-restack = bspwm
 
-[module/fs-root]
-type = internal/fs
-mount-0 = /
-label-mounted = %{F#e60053}%percentage_used%%%{F-} used of %mountpoint%
-
-
-[module/xbacklight]
-type = internal/xbacklight
-output = eDP-1
-format = <ramp> <bar>
-
-ramp-0 = 
-ramp-0-foreground = #666
-ramp-1 = 
-ramp-1-foreground = #999
-ramp-2 = 
-ramp-2-foreground = #fff
-
-bar-width = 12
-bar-indicator = |
-bar-indicator-font = 6
-bar-indicator-foreground = #bbffffff
-bar-fill = ─
-bar-fill-font = 6
-bar-fill-foreground = #9f78e1
-bar-empty = ─
-bar-empty-font = 6
-bar-empty-foreground = #44
-
-
-[module/backlight]
-type = internal/backlight
-card = intel_backlight
-format = <ramp> <label>
-ramp-0 = 
-ramp-1 = 
-ramp-2 = 
-ramp-foreground = #666
-interactive = true
-
+[module/playerctl]
+type = custom/script
+interval = 1
+exec = echo $(playerctl --player plasma-browser-integration metadata -f '{{title}}' 2>/dev/null | sed -E 's/(.{20}).+/\1.../') %{T2} %{T3}%{F-}%{A1:playerctl previous:} %{A} %{A1:playerctl --player plasma-browser-integration play-pause:}$(playerctl --player plasma-browser-integration status 2>/dev/null | grep Playing >/dev/null && echo '' || echo '契')%{A} %{A1:playerctl next:}%{A}
+exec-if = playerctl metadata -f {{playerName}} 2>/dev/null | grep -v mopidy >/dev/null
+click-left = playerctl --player plasma-browser-integration play-pause
 
 [module/bspwm]
 type = internal/bspwm
-format = <label-state> <label-mode>
+format = " <label-state> "
 
-ws-icon-0 = term;
-ws-icon-1 = web;
-ws-icon-2 = code;
-ws-icon-3 = music;
-ws-icon-4 = irssi;
+enable-click = true
+enable-scroll = true
+icon-default = "  %{T3}○%{T-}  "
+label-monitor =
+label-active = "  %{T3}●%{T-}  "
+label-active-foreground = #ffffff
+label-occupied = "  %{T3}◉%{T-}  "
+label-occupied-foreground = #ffffff
+label-urgent = "  %{T3}●%{T-}  "
+label-urgent-foreground = #ff0000
+label-empty = "  %{T3}○%{T-}  "
+label-empty-foreground = #ffffff
 
-label-dimmed-underline = ${root.background}
-
-label-focused = %index%
-label-focused-foreground = #f3f3f3
-label-focused-background = #3f3f3f
-;label-focused-underline = ${colors.accent}
-label-focused-underline = #9f78e1
-label-focused-font = 4
-label-focused-padding = 4
-
-label-occupied = %index% 
-label-occupied-underline = #555555
-label-occupied-font = 4
-label-occupied-padding = 4
-
-label-urgent = %icon%  %name%
-label-urgent-foreground = #000000
-label-urgent-background = #bd2c40
-label-urgent-underline = #9b0a20
-label-urgent-font = 4
-label-urgent-padding = 4
-
-label-empty = 
+# label-dimmed-underline = ${root.background}
+# 
+# label-focused = %index%
+# label-focused-foreground = #f3f3f3
+# #label-focused-background = #3f3f3f
+# label-focused-underline = #9f78e1
+# label-focused-font = 4
+# label-focused-padding = 4
+# 
+# label-occupied = %index% 
+# label-occupied-underline = #555555
+# label-occupied-font = 4
+# label-occupied-padding = 4
+# 
+# label-urgent = %icon%  %name%
+# label-urgent-foreground = #000000
+# label-urgent-background = #bd2c40
+# label-urgent-underline = #9b0a20
+# label-urgent-font = 4
+# label-urgent-padding = 4
+# 
+# label-empty = 
 
 [module/i3]
 type = internal/i3
@@ -197,33 +147,33 @@ interval = 1.5
 format = <label> <ramp-coreload>
 
 label = CPU
-label-font = 3
-label-foreground = #99
+label-font = 1
+label-foreground = #bdae93
 
 ramp-coreload-0 = ▁
 ramp-coreload-0-font = 2
-ramp-coreload-0-foreground = #aaff77
+ramp-coreload-0-foreground = #A3BE8C
 ramp-coreload-1 = ▂
 ramp-coreload-1-font = 2
-ramp-coreload-1-foreground = #aaff77
+ramp-coreload-1-foreground = #A3BE8C
 ramp-coreload-2 = ▃
 ramp-coreload-2-font = 2
-ramp-coreload-2-foreground = #aaff77
+ramp-coreload-2-foreground = #EBCB8B
 ramp-coreload-3 = ▄
 ramp-coreload-3-font = 2
-ramp-coreload-3-foreground = #aaff77
+ramp-coreload-3-foreground = #EBCB8B
 ramp-coreload-4 = ▅
 ramp-coreload-4-font = 2
-ramp-coreload-4-foreground = #fba922
+ramp-coreload-4-foreground = #D08770
 ramp-coreload-5 = ▆
 ramp-coreload-5-font = 2
-ramp-coreload-5-foreground = #fba922
+ramp-coreload-5-foreground = #D08770
 ramp-coreload-6 = ▇
 ramp-coreload-6-font = 2
-ramp-coreload-6-foreground = #ff5555
+ramp-coreload-6-foreground = #BF616A
 ramp-coreload-7 = █
 ramp-coreload-7-font = 2
-ramp-coreload-7-foreground = #ff5555
+ramp-coreload-7-foreground = #BF616A
 
 [module/memory]
 type = internal/memory
@@ -231,15 +181,16 @@ interval = 0.2
 format = <label> <bar-used>
 
 label = RAM
-label-font = 3
-label-foreground = #99
+label-font = 1
+label-foreground = #bdae93
 
+bar-font = 2
 bar-used-width = 10
 bar-used-gradient = true
-bar-used-foreground-0 = #2f8419
-bar-used-foreground-1 = #2f8419
-bar-used-foreground-2 = #2f8419
-bar-used-foreground-3 = #2f8419
+bar-used-foreground-0 = #39A11F
+bar-used-foreground-1 = #34941C
+bar-used-foreground-2 = #30871A
+bar-used-foreground-3 = #2B7A17
 bar-used-indicator = █
 bar-used-indicator-font = 2
 bar-used-indicator-foreground = #fff
@@ -248,38 +199,6 @@ bar-used-fill-font = 2
 bar-used-empty = █
 bar-used-empty-font = 2
 bar-used-empty-foreground = #44
-
-[module/wireless-network]
-type = internal/network
-interface = wlp1s0
-interval = 2.0
-ping-interval = 10
-
-format-connected = <ramp-signal> <label-connected>
-label-connected = %essid%
-label-disconnected =    not connected
-label-disconnected-foreground = #66
-
-ramp-signal-0 = 
-ramp-signal-1 = 
-ramp-signal-2 = 
-ramp-signal-3 = 
-ramp-signal-4 = 
-
-animation-packetloss-0 = 
-animation-packetloss-0-foreground = #ffa64c
-animation-packetloss-1 = 
-animation-packetloss-1-foreground = ${bar/top.foreground}
-animation-packetloss-framerate = 500
-
-[module/wired-network]
-type = internal/network
-interface = net0
-interval = 2.0
-
-label-connected =   %local_ip%
-label-disconnected = Ethernet disconnected
-label-disconnected-foreground = #66
 
 [module/mpd]
 type = internal/mpd
@@ -318,10 +237,7 @@ bar-progress-empty-foreground = #ee
 [module/clock]
 type = internal/date
 interval = 5
-format-padding = 5
-format-background = #000
-format-foreground = #fff
-date = %%{F#bb}%Y-%m-%d%%{F-}  %%{F#ee}%H:%M%%{F-}
+date = %m-%d-%y  %H:%M
 
 [module/pulseaudio]
 type = internal/pulseaudio
@@ -331,77 +247,104 @@ use-ui-max = true
 ;   <label-volume> (default)
 ;   <ramp-volume>
 ;   <bar-volume>
-format-volume = <label-volume>
+format-volume = <label-volume> <bar-volume> 
 
 ; Available tags:
 ;   <label-muted> (default)
 ;   <ramp-volume>
 ;   <bar-volume>
-;format-muted = <label-muted>
+format-muted = <label-muted>
 
 ; Available tokens:
 ;   %percentage% (default)
-;label-volume = %percentage%%
+label-volume = VOL
+label-volume-font = 1
+label-volume-foreground = #bdae93
 
 ; Available tokens:
 ;   %percentage% (default)
-label-muted = muted
-label-muted-foreground = #666
+label-muted = VOL MUTED
+label-muted-font = 1
+label-muted-foreground = #7c6f64
 
 ; Only applies if <ramp-volume> is used
 ramp-volume-0 = 
 ramp-volume-1 = 
 ramp-volume-2 = 
 
+bar-font = 2
+bar-volume-width = 10
+bar-volume-gradient = true
+bar-volume-foreground-0 = #a3be8c
+bar-volume-foreground-1 = #a3be8c
+bar-volume-foreground-2 = #a3be8c
+bar-volume-foreground-3 = #a3be8c
+bar-volume-indicator = |
+bar-volume-indicator-font = 2
+bar-volume-indicator-foreground = #fff
+bar-volume-fill = ―
+bar-volume-fill-font = 2
+bar-volume-empty = -
+bar-volume-empty-font = 2
+bar-volume-empty-foreground = #44
+
 [module/battery]
 type = internal/battery
-full-at = 98
-format-charging = %{T3}Battery <label-charging> %{T-}
-format-discharging = %{T3}Battery <label-discharging> %{T-}
-;format-full = %{T3}Battery <label-full>
-label-charging-font = 10
-label-discharging-font = 3
-label-full =
-;label-full-font = 3
+full-at = 97
+format-charging = <label-charging><ramp-capacity>
+format-discharging = <label-discharging><ramp-capacity>
+format-full = <label-full>
+label-full = 
+label-charging = BAT %percentage%%
+label-discharging = BATTERY %percentage%%
+label-discharging-foreground = #bdae93
+label-charging-foreground = #bdae93
+label-full-foreground = #bdae93
+
+ramp-capacity-0 = ▁
+ramp-capacity-0-font = 2
+ramp-capacity-0-foreground = #BF616A
+ramp-capacity-1 = ▂
+ramp-capacity-1-font = 2
+ramp-capacity-1-foreground = #BF616A
+ramp-capacity-2 = ▃
+ramp-capacity-2-font = 2
+ramp-capacity-2-foreground = #D08770
+ramp-capacity-3 = ▄
+ramp-capacity-3-font = 2
+ramp-capacity-3-foreground = #D08770
+ramp-capacity-4 = ▅
+ramp-capacity-4-font = 2
+ramp-capacity-4-foreground = #EBCB8B
+ramp-capacity-5 = ▆
+ramp-capacity-5-font = 2
+ramp-capacity-5-foreground = #EBCB8B
+ramp-capacity-6 = ▇
+ramp-capacity-6-font = 2
+ramp-capacity-6-foreground = #A3BE8C
+ramp-capacity-7 = █
+ramp-capacity-7-font = 2
+ramp-capacity-7-foreground = #A3BE8C
 
 [module/xwindow]
 type = internal/xwindow
-label-maxlen = 50
+label-maxlen = 25
 label-foreground = #bbb
 
-[module/powermenu]
-type = custom/menu
+[module/cava]
+type = custom/script
+tail = true
+exec = $HOME/.config/polybar/cava.sh
+format = <label>
+format-font = 5
+label = %output%
 
-format-padding = 4
-format-background = #1c1c1c
-format-foreground = #fff
+[module/wlan]
+type = internal/network
+interface = wlp4s0
+interval = 5
 
-label-open = 
-label-close = 
-label-separator = " - "
-
-menu-0-0 = Terminate WM
-menu-0-0-foreground = ${colors.accent}
-menu-0-0-exec = bspc quit -1
-menu-0-1 = Reboot
-menu-0-1-foreground = ${colors.accent}
-menu-0-1-exec = menu-open-1
-menu-0-2 = Power off
-menu-0-2-foreground = ${colors.accent}
-menu-0-2-exec = menu-open-2
-
-menu-1-0 = Cancel
-menu-1-0-foreground = ${colors.accent}
-menu-1-0-exec = menu-open-0
-menu-1-1 = Reboot
-menu-1-1-foreground = ${colors.accent}
-menu-1-1-exec = reboot
-
-menu-2-0 = Power off
-menu-2-0-foreground = ${colors.accent}
-menu-2-0-exec = shutdown now
-menu-2-1 = Cancel
-menu-2-1-foreground = ${colors.accent}
-menu-2-1-exec = menu-open-0
-
-; vim:ft=dosini
+label-connected-foreground = #bdae93
+label-connected = %{A1:nm-connection-editor:}NET  %local_ip%%{A}
+label-disconnected-foreground = #7c6f64
+label-disconnected = %{A1:nm-connection-editor:}NET  %ifname% diconnected%{A}

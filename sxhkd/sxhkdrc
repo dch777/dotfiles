@@ -4,11 +4,11 @@
 
 # terminal emulator
 super + Return
-	urxvt
+	alacritty -e "zsh"
 
 # program launcher
 super + d
-	rofi -show run
+	rofi -show drun
 
 # make sxhkd reload its configuration files:
 super + Escape
@@ -64,10 +64,6 @@ super + ctrl + {m,x,y,z}
 # focus the node in the given direction
 super + {_,shift + }{h,j,k,l}
 	bspc node -{f,s} {west,south,north,east}
-
-# focus the node for the given path jump
-super + {p,b,comma,period}
-	bspc node -f @{parent,brother,first,second}
 
 # focus the next/previous node in the current desktop
 super + {_,shift + }c
@@ -131,31 +127,22 @@ super + {Left,Down,Up,Right}
 #
 
 #brightness
-XF86MonBrightnessUp
-	xbacklight inc 5
-XF86MonBrightnessDown
-	xbacklight dec 5
+XF86MonBrightness{Up,Down}
+	~/.scripts/brightness {up,down}
 
 #volume
 XF86AudioRaiseVolume
-	pactl set-sink-volume @DEFAULT_SINK@ +2%
+	~/.scripts/volume up
 XF86AudioLowerVolume
-	pactl set-sink-volume @DEFAULT_SINK@ -2%
+	~/.scripts/volume down
 XF86AudioMute
-	pactl set-sink-mute @DEFAULT_SINK@ toggle
-
-super + shift + plus
-	pactl set-sink-volume @DEFAULT_SINK@ +2%
-super + shift + minus
-	pactl set-sink-volume @DEFAULT_SINK@ -2%
-super + equal
-	pactl set-sink-mute @DEFAULT_SINK@ toggle
+	~/.scripts/volume mute
 
 #
 #lock
 #
 super + x
-	scrot -p -o 'lock.png' -e 'convert $f -paint 6 $f && i3lock -i $f -e -p win' 
+	betterlockscreen -l
 
 super + shift + x
 	betterlockscreen -s
@@ -164,16 +151,16 @@ super + shift + x
 #utility
 #
 super + o
-	urxvt -e nnn
+	alacritty -e ranger
 
 super + shift + Return
-	urxvt -e tmux attach -t dev
+	alacritty
 
-super + p
-	scrot -s
+super + shift + p
+	~/.scripts/screenshot
 
-super + shift + f
-	~/scripts/focus
+#super + shift + f
+	# ~/scripts/focus
 
 #
 #application shortcuts
