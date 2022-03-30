@@ -1,8 +1,4 @@
 call plug#begin()
-Plug 'vimwiki/vimwiki'
-Plug 'tools-life/taskwiki'
-Plug 'mattn/calendar-vim'
-
 Plug 'nvim-lua/plenary.nvim'
 Plug 'prabirshrestha/async.vim'
 Plug 'ahmedkhalf/lsp-rooter.nvim'
@@ -12,18 +8,18 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'junegunn/fzf.vim'
 
-Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'deoplete-plugins/deoplete-lsp'
+Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
+Plug 'ms-jpq/coq.thirdparty', {'branch': '3p'}
 Plug 'onsails/lspkind-nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'neovim/nvim-lspconfig'
 Plug 'mfussenegger/nvim-jdtls'
-Plug 'williamboman/nvim-lsp-installer'
 
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
 Plug 'epilande/vim-react-snippets'
-Plug 'jiangmiao/auto-pairs'
+Plug 'windwp/nvim-autopairs'
 Plug 'prettier/vim-prettier'
 
 Plug 'tpope/vim-surround'
@@ -36,7 +32,7 @@ Plug 'morhetz/gruvbox'
 Plug 'hoob3rt/lualine.nvim'
 Plug 'mhinz/vim-startify'
 Plug 'kyazdani42/nvim-web-devicons'
-Plug 'kyazdani42/nvim-tree.lua'
+Plug 'ms-jpq/chadtree'
 Plug 'akinsho/nvim-bufferline.lua'
 Plug 'lewis6991/gitsigns.nvim'
 call plug#end()
@@ -68,17 +64,18 @@ set termguicolors
 set indentexpr=lisp
 set mouse=a
 set foldmethod=expr
-set foldexpr=nvim_treesitter#foldexpr()
 set nofoldenable
 set list listchars=tab:\ \ ,trail:·,precedes:<,extends:>
 set nowrap
 set undofile
 set undodir=~/.config/nvim/undodir
+set textwidth=80
+set colorcolumn=+1
 
 let g:python_host_prog = '/bin/python'
 let g:python3_host_prog = '/bin/python3'
 
-let g:zipPlugin_ext = '.gz,.zip' 
+let g:zipPlugin_ext = '.gz,.zip'
 let g:ctrlp_show_hidden = 1
 
 let g:airline#extensions#tabline#enabled = 1
@@ -100,16 +97,11 @@ let g:ale_completion_autoimport = 1
 let g:vista_fzf_preview = ['right:50%']
 let g:vista_icon_indent = ["╰─▸ ", "├─▸ "]
 
-let g:nvim_tree_auto_open = 1
-let g:nvim_tree_auto_close = 1
-let g:nvim_tree_disable_window_picker = 1
-let g:nvim_tree_update_cwd = 1
-let g:nvim_tree_follow = 1
-let g:nvim_tree_hide_dotfiles = 1
-let g:nvim_tree_add_trailing = 1
+"let g:nvim_tree_disable_window_picker = 1
+"let g:nvim_tree_add_trailing = 1
 
 let g:startify_padding_left = 5
-let g:nvim_tree_auto_ignore_ft = [ 'startify', 'dashboard' ] 
+"let g:nvim_tree_auto_ignore_ft = [ 'startify', 'dashboard' ] 
 let g:ascii = [
 \ '         //                 /*',
 \ '      ,(/(//,               *###',
@@ -144,11 +136,6 @@ let g:startify_bookmarks = [
             \ { 'i': '~/.config/nvim/init.vim' },
             \ { 's': '~/.scripts' },
             \ ]
-
-let g:vimwiki_list = [{'path': '~/Documents/Notes/',
-                      \ 'syntax': 'markdown', 'ext': '.md',
-		      \ 'custom_wiki2html': 'vimwiki_markdown',
-		      \ 'html_filename_parameterization': 1}]
 
 filetype indent on
 syntax on
@@ -223,11 +210,9 @@ autocmd FileType html nnoremap <C-S-o> :Dispatch! google-chrome-stable --user-da
 autocmd FileType java,py,json setlocal tabstop=4 shiftwidth=4
 autocmd FileType html,css,typescriptreact,javascript,javascriptreact,markdown,hpp,cpp,c setlocal tabstop=2 shiftwidth=2 
 autocmd FileType tex nnoremap <C-S-o> :Dispatch! zathura "%:r.pdf"<CR>
+autocmd FileType folder CHADOpen
 
 autocmd FileType markdown imap <c-k> <plug>(fzf-complete-path)
-autocmd BufNewFile ~/Documents/Notes/diary/*.md :silent 0r !~/.scripts/generate-vimwiki-diary-template '%'
-autocmd FileType vimwiki nnoremap <leader>s :TaskWikiStart<CR>
-autocmd FileType vimwiki nnoremap <leader><S-s> :TaskWikiStop<CR>
 
 autocmd BufWritePost *.tex Dispatch! latexmk -pdf %
 autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_seq_sync()
@@ -240,6 +225,7 @@ autocmd VimResized * exe "normal! \<c-w>="
 ""--------------------Lua--------------------
 lua << EOF
 require('gitsigns').setup()
+--require('nvim-tree').setup{update_cwd=true}
 require("bufferline").setup{
   options = {
     offsets = {
@@ -266,22 +252,27 @@ require('lualine').setup{
     },
   }
 }
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-  highlight = {
-    enable = true,              -- false will disable the whole extension
-  },
-}
+--require'nvim-treesitter.configs'.setup {
+--  ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+--  highlight = {
+--    enable = true,              -- false will disable the whole extension
+--  },
+--}
 
 require('lspkind').init({
-    -- enables text annotations
+    -- DEPRECATED (use mode instead): enables text annotations
     --
     -- default: true
-    with_text = true,
+    -- with_text = true,
+
+    -- defines how annotations are shown
+    -- default: symbol
+    -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
+    mode = 'symbol_text',
 
     -- default symbol map
-    -- can be either 'default' or
-    -- 'codicons' for codicon preset (requires vscode-codicons font installed)
+    -- can be either 'default' (requires nerd-fonts font) or
+    -- 'codicons' for codicon preset (requires vscode-codicons font)
     --
     -- default: 'default'
     preset = 'codicons',
@@ -290,41 +281,81 @@ require('lspkind').init({
     --
     -- default: {}
     symbol_map = {
-      Text = '',
-      Method = 'ƒ',
-      Function = '',
-      Constructor = '',
-      Variable = '',
-      Class = '',
-      Interface = 'ﰮ',
-      Module = '',
-      Property = '',
-      Unit = '',
-      Value = '',
-      Enum = '了',
-      Keyword = '',
-      Snippet = '﬌',
-      Color = '',
-      File = '',
-      Folder = '',
-      EnumMember = '',
-      Constant = '',
-      Struct = ''
+      Text = "",
+      Method = "",
+      Function = "",
+      Constructor = "",
+      Field = "ﰠ",
+      Variable = "",
+      Class = "ﴯ",
+      Interface = "",
+      Module = "",
+      Property = "ﰠ",
+      Unit = "塞",
+      Value = "",
+      Enum = "",
+      Keyword = "",
+      Snippet = "",
+      Color = "",
+      File = "",
+      Reference = "",
+      Folder = "",
+      EnumMember = "",
+      Constant = "",
+      Struct = "פּ",
+      Event = "",
+      Operator = "",
+      TypeParameter = ""
     },
 })
 
+local remap = vim.api.nvim_set_keymap
+local npairs = require('nvim-autopairs')
 
-local on_attach = function()
-  vim.api.nvim_exec("NvimTreeOpen", true)
-  vim.api.nvim_exec("Vista nvim_lsp", true)
-  vim.api.nvim_exec("wincmd p", true)
+npairs.setup({ map_bs = false, map_cr = false })
+
+vim.g.coq_settings = { keymap = { recommended = false } }
+
+-- these mappings are coq recommended mappings unrelated to nvim-autopairs
+remap('i', '<esc>', [[pumvisible() ? "<c-e><esc>" : "<esc>"]], { expr = true, noremap = true })
+remap('i', '<c-c>', [[pumvisible() ? "<c-e><c-c>" : "<c-c>"]], { expr = true, noremap = true })
+remap('i', '<tab>', [[pumvisible() ? "<c-n>" : "<tab>"]], { expr = true, noremap = true })
+remap('i', '<s-tab>', [[pumvisible() ? "<c-p>" : "<bs>"]], { expr = true, noremap = true })
+
+-- skip it, if you use another global object
+_G.MUtils= {}
+
+MUtils.CR = function()
+  if vim.fn.pumvisible() ~= 0 then
+    if vim.fn.complete_info({ 'selected' }).selected ~= -1 then
+      return npairs.esc('<c-y>')
+    else
+      return npairs.esc('<c-e>') .. npairs.autopairs_cr()
+    end
+  else
+    return npairs.autopairs_cr()
+  end
 end
-require'lspconfig'.pylsp.setup{on_attach = on_attach}
-require'lspconfig'.clangd.setup{on_attach = on_attach}
-require'lspconfig'.denols.setup{on_attach = on_attach}
-require'lspconfig'.cssls.setup{on_attach = on_attach}
-require'lspconfig'.texlab.setup{on_attach = on_attach}
-require'lspconfig'.zeta_note.setup{cmd = {'zeta-note-linux'}, on_attach = on_attach}
-require'lspconfig'.jdtls.setup{cmd = { "jdtls" }, on_attach = on_attach}
-require'lspconfig'.bashls.setup{}
+remap('i', '<cr>', 'v:lua.MUtils.CR()', { expr = true, noremap = true })
+
+MUtils.BS = function()
+  if vim.fn.pumvisible() ~= 0 and vim.fn.complete_info({ 'mode' }).mode == 'eval' then
+    return npairs.esc('<c-e>') .. npairs.autopairs_bs()
+  else
+    return npairs.autopairs_bs()
+  end
+end
+remap('i', '<bs>', 'v:lua.MUtils.BS()', { expr = true, noremap = true })
+
+local coq = require'coq'
+local lsp = require'lspconfig'
+local on_attach = function()
+  vim.api.nvim_exec("COQnow --shut-up", true)
+end
+lsp.pylsp.setup(coq.lsp_ensure_capabilities{on_attach = on_attach})
+lsp.clangd.setup(coq.lsp_ensure_capabilities{on_attach = on_attach})
+lsp.denols.setup(coq.lsp_ensure_capabilities{on_attach = on_attach})
+lsp.cssls.setup(coq.lsp_ensure_capabilities{on_attach = on_attach})
+lsp.texlab.setup(coq.lsp_ensure_capabilities{on_attach = on_attach})
+lsp.jdtls.setup(coq.lsp_ensure_capabilities{cmd = { "jdtls" }, on_attach = on_attach})
 EOF

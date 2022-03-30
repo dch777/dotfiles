@@ -1,3 +1,6 @@
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
@@ -35,10 +38,10 @@ alias ZZ="exit"
 alias ZQ="exit"
 alias gg="ga . && gc && gp"
 
-alias psu="sudo pacman -S"
-alias psyu="sudo pacman -Syu"
-alias psyyu="sudo pacman -Syyu"
-alias prsc="sudo pacman -Rsc"
+alias psu="paru -S"
+alias psyu="paru"
+alias psyyu="paru -Syyu"
+alias prsc="paru -Rsc"
 
 #tmux setup
 tmux new-session -s dev -d 2>/dev/null
@@ -46,5 +49,5 @@ alias tmuxn='tmux new-session -s $$ -t dev -d; tmux a -t $$'
 _trap_exit() { tmux kill-session -t $$}
 trap _trap_exit EXIT
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
